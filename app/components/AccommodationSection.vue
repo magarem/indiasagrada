@@ -1,0 +1,137 @@
+<template>
+  <section class="py-16 sm:py-24" style="background-color: #fbead8; color: #010000;">
+    <div class="container mx-auto px-4 max-w-6xl">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 uppercase tracking-tighter font-serif">
+          Acomodações
+        </h2>
+        <div class="h-1 w-24 bg-[#4a3728] mx-auto mb-6"></div>
+        <p class="text-lg max-w-2xl mx-auto opacity-80 font-serif">
+          Selecionamos acomodações confortáveis, seguras e bem localizadas para sua total imersão e descanso.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div 
+          v-for="(item, index) in accommodations" 
+          :key="index" 
+          @click="openDetails(item)"
+          class="group cursor-pointer bg-white/40 rounded-2xl overflow-hidden shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-2"
+        >
+          <div class="h-64 overflow-hidden relative">
+            <img 
+              :src="`/images/${item.image}`" 
+              :alt="item.title"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white border border-white px-4 py-2 rounded-full text-sm uppercase tracking-widest">Ver detalhes</span>
+            </div>
+          </div>
+
+          <div class="p-6 text-center">
+            <h3 class="font-serif font-bold text-xl uppercase tracking-wider text-[#4a3728]">{{ item.title }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <Dialog 
+        v-model:visible="displayModal" 
+        :header="selectedItem?.title" 
+        modal 
+        dismissableMask
+        :style="{ width: '90vw', maxWidth: '1000px' }"
+        :breakpoints="{ '960px': '95vw' }"
+        contentClass="p-0 overflow-hidden rounded-b-2xl"
+      >
+        <div class="flex flex-col md:flex-row h-full max-h-[80vh] md:max-h-none overflow-y-auto">
+          <div class="w-full md:w-1/2 h-64 md:h-auto">
+            <img 
+              :src="`/images/${selectedItem?.image}`" 
+              :alt="selectedItem?.title"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          
+          <div class="w-full md:w-1/2 p-8 md:p-12 bg-[#fdfcf0] flex flex-col justify-center">
+            <h3 class="text-3xl font-serif mb-6 text-[#4a3728] border-b border-[#d1b253]/30 pb-4">
+              {{ selectedItem?.title }}
+            </h3>
+            <p class="text-lg leading-relaxed text-gray-800 font-serif italic opacity-90">
+              {{ selectedItem?.description }}
+            </p>
+            
+            <div class="mt-8">
+              <button 
+                @click="displayModal = false"
+                class="bg-[#d1b253] text-white px-8 py-3 rounded-full font-serif uppercase tracking-widest hover:bg-[#b09440] transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const displayModal = ref(false);
+const selectedItem = ref(null);
+
+const openDetails = (item) => {
+  selectedItem.value = item;
+  displayModal.value = true;
+};
+
+const accommodations = [
+  {
+    title: 'Vedic Dham',
+    description: 'Em Rishikesh, nossa casa será o Vedic Dham, um Ashram tradicional que une o charme da hospitalidade indiana ao conforto que buscamos. Estrategicamente localizado em Lakshman Jhula, o coração vibrante da cidade, o local oferece o privilégio de estar às margens do Rio Ganges. Da nossa sala de yoga, é possível contemplar as águas límpidas em tons de esmeralda, criando o cenário perfeito para a prática e a meditação.',
+    image: 'acomodations/acomodations1.png'
+  },
+  {
+    title: 'Paramgati Ashram',
+    description: 'Em Mayapur, desfrutaremos do Paramgati Yoga Ashram, um refúgio de serenidade recém-construído que combina modernidade e aconchego. O espaço se destaca pelo cuidado em cada detalhe: desde os quartos impecáveis e extremamente confortáveis até uma sala de yoga ampla e inspiradora.',
+    image: 'acomodations/parangati.jpeg'
+  },
+  {
+    title: 'Mayfair',
+    description: 'Em Puri, nossa estadia será no prestigiado Mayfair, indiscutivelmente o melhor e mais encantador refúgio da região. O resort é uma verdadeira celebração da cultura local, harmonizando perfeitamente uma estrutura moderna com uma ala tradicional adornada por magníficas esculturas em pedra.',
+    image: 'acomodations/mayfair-heritage.jpg'
+  },
+  {
+    title: 'Ikaki Niwas',
+    description: 'Em Jaipur, seremos acolhidos pelo charme irresistível do Ikaki Niwas, uma hospedagem boutique que nos faz sentir verdadeiramente em casa. Localizado em um refúgio de tranquilidade dentro da "Cidade Rosa", este refúgio combina a hospitalidade calorosa de uma residência tradicional.',
+    image: 'acomodations/ Ikaki_Niwas.png'
+  },
+  {
+    title: 'Jaypee Palace',
+    description: 'Nossa passagem por Agra será emoldurada pelo luxo monumental do Jaypee Palace. Estrategicamente escolhido para nossa única noite na cidade, este hotel cinco estrelas combina a arquitetura mogol com jardins vastos e relaxantes, oferecendo o descanso ideal.',
+    image: 'acomodations/jaypee.jpg'
+  },
+  {
+    title: 'The Lalit Delhi',
+    description: 'Encerraremos a nossa jornada na vibrante capital indiana, hospedados no sofisticado The Lalit Delhi. Estrategicamente localizado em Connaught Place, o centro geográfico e comercial da cidade, o hotel oferece o equilíbrio perfeito entre a elegância contemporânea.',
+    image: 'acomodations/lalitt.png'
+  }
+];
+</script>
+
+<style scoped>
+/* Personalização para remover o header padrão do PrimeVue se desejar um visual mais limpo */
+:deep(.p-dialog-header) {
+  background: #fdfcf0;
+  border-bottom: none;
+  padding: 1rem;
+}
+
+:deep(.p-dialog-content) {
+  padding: 0;
+}
+</style>
