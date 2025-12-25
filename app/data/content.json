@@ -1,0 +1,38 @@
+{
+  "siteinfo": {
+    "title": "Índia Sagrada",
+    "description": "Uma jornada inesquecível pela Índia, explorando seus templos antigos, cultura vibrante e paisagens deslumbrantes.",
+    "keywords": "Índia, viagem, turismo, cultura, templos, roteiro, destinos, acomodações"
+  },
+  "nav": [
+  { "label": "Sobre", "to": "#sobre" },
+  { "label": "Roteiro", "to": "#roteiro" },
+  { "label": "Destinos", "to": "#destinos" },
+  { "label": "Acomodações", "to": "#acomodacoes" },
+  { "label": "Contato", "to": "#contato" }
+], "faq": [
+  { 
+    "question": "Precisa de Visto para a Índia?", 
+    "answer": "Sim, brasileiros precisam de visto. O processo é feito online (e-Visa) e nós fornecemos um tutorial detalhado para auxiliar nossos viajantes." 
+  },
+  { 
+    "question": "Quais vacinas são obrigatórias?", 
+    "answer": "A vacina contra a Febre Amarela é obrigatória. É necessário apresentar o Certificado Internacional de Vacinação (CIVP) no embarque." 
+  },
+  { 
+    "question": "O roteiro inclui passagens aéreas?", 
+    "answer": "Nossos pacotes incluem todos os deslocamentos internos na Índia (voos domésticos e ônibus privativo). A passagem internacional saindo do Brasil é à parte, mas oferecemos suporte na escolha dos melhores voos." 
+  },
+  { 
+    "question": "É uma viagem segura para mulheres?", 
+    "answer": "Sim. Nossa jornada é planejada com foco total na segurança e conforto, com guias experientes, transporte privativo e hotéis selecionados." 
+  },
+  { 
+    "question": "Precidsa ter um plano de saúde internacional?", 
+    "answer": "Recomendamos fortemente que todos os viajantes contratem um plano de saúde internacional que cubra despesas médicas na Índia. Nossa agência pode ajudar na contratação." 
+  },
+  { 
+    "question": "Como é o clima na Índia nessa época?", 
+    "answer": "Essa é a melhor época para visitar a Índia, com temperaturas amenas e clima seco, ideal para explorar os destinos do roteiro." 
+  }
+]}

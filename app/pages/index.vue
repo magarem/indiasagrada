@@ -4,18 +4,14 @@
     <div id="home">
       <SlideShow />
     </div>
-
-    <div id="sobre" class="scroll-mt-14">
+    
+      <div id="sobre" class="scroll-mt-14">
       <WelcomeSection />
     </div>
 
     <div id="roteiro" class="scroll-mt-14">
       <ItineraryTable />
     </div>
-    
-    
-    
-
     <div id="destinos" class="scroll-mt-14">
  <DestinationsSection />
 </div>
@@ -32,6 +28,7 @@
 
    <PhotoAlbum />
    <Depoimentos />
+   <FaqSection/>
 <div id="investimento" class="scroll-mt-14">
       <InvestimentSection />
     </div>
@@ -47,6 +44,8 @@
 </template>
 
 <script setup>
+import FaqSection from '~/components/FaqSection.vue';
+
 
 
 

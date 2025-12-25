@@ -12,7 +12,7 @@
     <WhatsAppFab />
     <!-- Footer global -->
     <footer class="bg-gray-800 text-white py-6 text-center text-sm">
-      <p>&copy; 2025 Índia Sagrada. Todos os direitos reservados.</p>
+      <p>&copy; 2025 Índia Sagrada. Todos os direitos reservados. Produzido pelo Magaweb</p>
     </footer>
 
   </div>

@@ -42,8 +42,8 @@ const itinerary = ref([
   },
   {
     date: '23 de Fev',
-    location: 'Dehradun → Kolkata',
-    details: 'Voo doméstico de Dehradun para Kolkata. Traslado para o Ashram.',
+    location: 'Dehradun → Calcutá',
+    details: 'Voo doméstico de Dehradun para Calcutá. Traslado para o Ashram.',
   },
   {
     date: '24–26 de Fev',

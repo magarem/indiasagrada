@@ -8,7 +8,7 @@
     </div>
 
     <a 
-      :href="`https://wa.me/11988844079`" 
+      :href="`https://wa.me/+5511988844079`" 
       target="_blank"
       class="group relative flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_10px_25px_-5px_rgba(37,211,102,0.4)] hover:scale-110 hover:shadow-[0_15px_30px_-5px_rgba(37,211,102,0.6)] transition-all duration-300 active:scale-95"
       aria-label="Falar no WhatsApp"
