@@ -1,17 +1,19 @@
 <template>
-  <section class="py-12 sm:py-20" style="background-color: #fae2c8; color: #010000;">
+  <section v-if="content" class="py-12 sm:py-20" style="background-color: #fae2c8; color: #010000;">
     <div class="container mx-auto px-4 max-w-5xl">
       
       <div class="text-center mb-10">
         <h2 class="text-3xl sm:text-4xl font-extrabold mb-3 uppercase tracking-tighter font-serif">
-          Vozes da Experiência
+          {{ content.title }}
         </h2>
-        <p class="text-base opacity-80 font-serif italic">Relatos de quem já vivenciou essa jornada.</p>
+        <p v-if="content.subtitle" class="text-base opacity-80 font-serif italic">
+          {{ content.subtitle }}
+        </p>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         <div 
-          v-for="(video, index) in testimonials" 
+          v-for="(video, index) in content.testimonials" 
           :key="index"
           @click="openVideo(video.youtubeId)"
           class="group cursor-pointer flex flex-col bg-white/20 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
@@ -22,22 +24,11 @@
               class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
               alt="Capa do depoimento"
             />
-        <!-- <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-  <div class="w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform duration-300">
-    
-    <svg 
-      width="20" 
-      height="20" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      class="ml-1"
-    >
-      <path d="M5 3L19 12L5 21V3Z" fill="white" />
-    </svg>
-
-  </div>
-</div> -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+              <div class="w-12 h-12 flex items-center justify-center bg-white/20 rounded-full backdrop-blur-sm">
+                 <div class="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-white border-b-[8px] border-b-transparent ml-1"></div>
+              </div>
+            </div>
           </div>
 
           <div class="p-3 bg-white/40">
@@ -51,7 +42,6 @@
         v-model:visible="displayVideo" 
         modal 
         :dismissableMask="true"
-        header="Depoimento"
         :showHeader="false"
         class="w-[95vw] max-w-4xl"
         :pt="{
@@ -71,57 +61,40 @@
         </div>
 
         <button 
-  @click="displayVideo = false"
-  class="fixed top-4 right-4 z-[1300] w-12 h-12 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-md border border-white/30 transition-all duration-300"
->
-  <svg 
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    stroke-width="2.5" 
-    stroke-linecap="round" 
-    stroke-linejoin="round"
-  >
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-</button>
+          @click="displayVideo = false"
+          class="fixed top-4 right-4 z-[1300] w-12 h-12 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-md border border-white/30 transition-all duration-300"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </Dialog>
-
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+const props = defineProps({
+  isPreview: { type: Boolean, default: false }
+})
+
+// Puxamos os dados do arquivo depoimentos.md
+const { content } = await useContentSource('depoimentos', props.isPreview)
 
 const displayVideo = ref(false);
 const selectedVideoId = ref('');
 
 const openVideo = (id) => {
-  selectedVideoId.value = id; // Define o ID do vídeo
-  displayVideo.value = true;   // Abre o modal
+  selectedVideoId.value = id;
+  displayVideo.value = true;
 };
-
-const testimonials = [
-  { name: 'Gustavo e Flor', location: 'Nova Friburgo, RJ', youtubeId: 'C6DOWMtbXhI' },
-  { name: 'Lincoln', location: 'São Paulo, SP', youtubeId: 'yT4NxSRqKSo' },
-  { name: 'Karen', location: 'Lages, SC', youtubeId: 'ufNEjF7Nn4A' },
-  { name: 'Maíra', location: 'Belo Horizonte, MG', youtubeId: 'feDgiBbl2RQ' },
-  { name: 'Vilma', location: 'São Paulo, SP', youtubeId: '5Y_wF2BR1AE' },
-  { name: 'Anna Thomas', location: 'Toronto', youtubeId: '9rPUirgF8N8' },
-  { name: 'Patrícia', location: 'Curitiba', youtubeId: 'VJpsCjf88HA' },
-  { name: 'Amanada', location: 'Vila Velha, ES', youtubeId: 'SAWk6SHIZGE' },
-];
 </script>
 
 <style scoped>
 .aspect-\[4\/5\] { aspect-ratio: 4 / 5; }
 .aspect-video { aspect-ratio: 16 / 9; }
 
-/* Garante que o modal fique sempre por cima de tudo */
 :deep(.p-dialog-mask) {
     z-index: 1100 !important;
 }

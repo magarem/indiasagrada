@@ -1,5 +1,6 @@
 <template>
   <header
+    v-if="content"
     class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
     :class="{
       'bg-[#d1b253] text-white backdrop-blur-md': !scrolled,   
@@ -20,7 +21,7 @@
           }"
           style="font-family: 'Times New Roman', serif; font-variant: small-caps;"
         >
-          {{ siteinfo.title }}
+          {{ content.title }}
         </span>
         <div 
           class="h-[2px] w-8 group-hover:w-24 transition-all duration-700 rounded-full mt-[-4px]"
@@ -30,7 +31,7 @@
 
       <nav class="hidden md:flex space-x-8">
         <NuxtLink
-          v-for="item in nav"
+          v-for="item in content.navigation"
           :key="item.to"
           :to="item.to"
           class="relative text-xl font-serif tracking-tight transition-all duration-300 group/link"
@@ -54,10 +55,7 @@
         <button
           @click="toggleMenu"
           class="focus:outline-none transition-colors duration-300"
-          :class="{
-            'text-[#fdfcf0]': !scrolled,
-            'text-[#4a3728]': scrolled
-          }"
+          :class="{ 'text-[#fdfcf0]': !scrolled, 'text-[#4a3728]': scrolled }"
         >
           <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path v-if="!menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -70,7 +68,7 @@
           class="absolute right-0 mt-4 w-64 bg-[#fdfcf0] shadow-2xl rounded-sm py-4 border border-[#d1b253]/30"
         >
           <NuxtLink
-            v-for="item in topmenu"
+            v-for="item in content.navigation"
             :key="item.to"
             :to="item.to"
             class="block px-8 py-4 text-[#4a3728] font-serif uppercase tracking-[0.2em] text-sm hover:bg-[#d1b253]/10 transition-colors"
@@ -86,19 +84,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import {siteinfo, nav} from '~/data/content.json'
 
-console.log(nav) 
+const props = defineProps({
+  isPreview: { type: Boolean, default: false }
+})
+
+// Usamos nosso Composable para carregar o settings.md
+const { content } = await useContentSource('settings', props.isPreview)
+
 const menuOpen = ref(false)
 const scrolled = ref(false)
-
-// const menu = [
-//   { label: 'Sobre', to: '#sobre' },
-//   { label: 'Roteiro', to: '#roteiro' },
-//   { label: 'Destinos', to: '#destinos' },
-//   { label: 'Acomodações', to: '#acomodacoes' },
-//   { label: 'Contato', to: '#contato' }
-// ]
 
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value

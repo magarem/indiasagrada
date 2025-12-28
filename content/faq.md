@@ -1,0 +1,22 @@
+---
+title: "Perguntas Frequentes"
+subtitle: "Tudo o que você precisa saber sobre sua jornada espiritual pela Índia Sagrada"
+contactText: "Ainda tem dúvidas?"
+linkText: "Fale conosco pelo WhatsApp!"
+linkUrl: "https://wa.me/seunumerowhatsapp"
+faqs:
+  - pergunta: "O que é a viagem Índia Sagrada?"
+    resposta: "A Índia Sagrada é uma jornada espiritual transformadora pelas terras mais sagradas da Índia (Varanasi, Rishikesh, Vrindavan, Agra, etc.). Combinamos visitas a templos milenares, rituais no Ganges, meditações em ashrams e ensinamentos profundos com foco em autoconhecimento e renovação interior."
+  - pergunta: "Preciso ter experiência prévia?"
+    resposta: "Não! A viagem é para todos os níveis: iniciantes curiosos e praticantes avançados de Yoga. Tudo é guiado de forma leve, respeitosa e no ritmo de cada um."
+  - pergunta: "O que está incluído no pacote?"
+    resposta: "Hospedagem em hotéis 4-5 estrelas ou ashrams confortáveis, todos os transportes internos (avião, trem e vans privativas), guias em português, entradas em templos e atrações, várias refeições e acompanhamento espiritual diário. Voos internacionais e visto não estão inclusos."
+  - pergunta: "É necessário visto e quais vacinas?"
+    resposta: "Brasileiros precisam do e-Visa indiano (fácil e online). A vacina de febre amarela é obrigatória. Enviamos um guia completo após a inscrição."
+  - pergunta: "A viagem é segura para mulheres e famílias com crianças?"
+    resposta: "Sim! Temos muitos anos de experiência levando grupos sempre com mulheres e crianças, incluindo nossas filhas. Usamos hotéis seguros, transporte privado e guias de confiança o tempo todo."
+  - pergunta: "Qual o tamanho dos grupos e datas de 2026?"
+    resposta: "Grupos pequenos e íntimos (máximo 20 pessoas). Próximas datas: Fevereiro/Março, de 2026. Vagas limitadas!"
+  - pergunta: "Como faço para reservar minha vaga?"
+    resposta: "É só clicar no botão de WhatsApp flutuante. Em até 24h enviamos todas as informações, valores atualizados e opções de parcelamento."
+---

@@ -1,17 +1,19 @@
 <template>
-  <section class="py-16 sm:py-24" style="background-color: #fbead8; color: #010000;">
+  <section v-if="content" class="py-16 sm:py-24" style="background-color: #fbead8; color: #010000;">
     <div class="container mx-auto px-4 max-w-6xl">
       
       <div class="text-center mb-12">
         <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 uppercase tracking-tighter font-serif">
-          Registros da Jornada
+          {{ content.title }}
         </h2>
-        <p class="text-lg opacity-80 font-serif italic">Um vislumbre das experiências que nos esperam.</p>
+        <p v-if="content.subtitle" class="text-lg opacity-80 font-serif italic">
+          {{ content.subtitle }}
+        </p>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         <div 
-          v-for="(photo, index) in photos" 
+          v-for="(photo, index) in content.photos" 
           :key="index"
           @click="openPhoto(photo)"
           class="group relative overflow-hidden rounded-xl bg-white/20 aspect-square shadow-md cursor-pointer touch-manipulation"
@@ -53,15 +55,17 @@
           @click.stop
         />
       </Dialog>
-
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+const props = defineProps({
+  isPreview: { type: Boolean, default: false }
+})
 
-const photos = ['7.jpeg', '2.png', '3.png', '4.png', '5.png', '6.png'];
+// Puxamos os dados do arquivo album.md
+const { content } = await useContentSource('album', props.isPreview)
 
 const isModalOpen = ref(false);
 const selectedPhoto = ref('');
@@ -73,11 +77,8 @@ const openPhoto = (photo) => {
 </script>
 
 <style scoped>
-.aspect-square {
-  aspect-ratio: 1 / 1;
-}
+.aspect-square { aspect-ratio: 1 / 1; }
 
-/* Garante que o Dialog do PrimeVue não tenha padding ou fundo branco */
 :deep(.p-dialog) {
   background: transparent !important;
   border: none !important;
@@ -85,10 +86,9 @@ const openPhoto = (photo) => {
 }
 
 :deep(.p-dialog-header) {
-  display: none !important; /* Remove o cabeçalho padrão */
+  display: none !important;
 }
 
-/* Evita zoom indesejado no mobile ao clicar rápido */
 .touch-manipulation {
   touch-action: manipulation;
 }

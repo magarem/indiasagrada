@@ -1,0 +1,23 @@
+---
+title: "Principais Destinos"
+intro: "Uma rota sagrada passando pelos pontos mais energéticos e históricos da Índia setentrional e oriental."
+destinations:
+  - name: "Rishikesh"
+    description: "Capital mundial do Yoga, aos pés dos Himalaias e às margens do Rio Ganges."
+    image: "/images/destinations/1.png"
+  - name: "Mayapur"
+    description: "Coração pulsante da tradição de Bhakti, com templos monumentais e devoção contagiante."
+    image: "/images/destinations/2.png"
+  - name: "Puri"
+    description: "Cidade sagrada à beira-mar, famosa pelo templo de Jagannath e pelo Templo do Sol em Konark."
+    image: "/images/destinations/3.png"
+  - name: "Jaipur"
+    description: "Cidade rosa dos palácios reais, fortalezas majestosas e do encantador templo de Govinda-ji."
+    image: "/images/destinations/5.webp"
+  - name: "Agra"
+    description: "Lar do icônico Taj Mahal, símbolo eterno do amor e da arquitetura indo-islâmica."
+    image: "/images/destinations/4.png"
+  - name: "Delhi"
+    description: "Capital da Índia, rica em história e cultura, ótima também para fazer compras."
+    image: "/images/destinations/6.jpg"
+---

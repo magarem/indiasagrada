@@ -1,20 +1,20 @@
 <template>
-  <section class="py-16 sm:py-24" style="background-color: #fbead8; color: #010000;">
+  <section v-if="content" class="py-16 sm:py-24" style="background-color: #fbead8; color: #010000;">
     <div class="container mx-auto px-4 max-w-6xl">
       
       <div class="text-center mb-16">
         <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 uppercase tracking-tighter font-serif">
-          Acomodações
+          {{ content.title }}
         </h2>
         <div class="h-1 w-24 bg-[#4a3728] mx-auto mb-6"></div>
-        <p class="text-lg max-w-2xl mx-auto opacity-80 font-serif">
-          Selecionamos acomodações confortáveis, seguras e bem localizadas para sua total imersão e descanso.
+        <p v-if="content.description" class="text-lg max-w-2xl mx-auto opacity-80 font-serif">
+          {{ content.description }}
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div 
-          v-for="(item, index) in accommodations" 
+          v-for="(item, index) in content.accommodations" 
           :key="index" 
           @click="openDetails(item)"
           class="group cursor-pointer bg-white/40 rounded-2xl overflow-hidden shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-2"
@@ -61,7 +61,6 @@
             <p class="text-lg leading-relaxed text-gray-800 font-serif italic opacity-90">
               {{ selectedItem?.description }}
             </p>
-            
             <div class="mt-8">
               <button 
                 @click="displayModal = false"
@@ -79,7 +78,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+const props = defineProps({
+  isPreview: { type: Boolean, default: false }
+})
+
+// Puxamos os dados de acomodacoes.md
+const { content } = await useContentSource('acomodacoes', props.isPreview)
 
 const displayModal = ref(false);
 const selectedItem = ref(null);
@@ -88,49 +92,14 @@ const openDetails = (item) => {
   selectedItem.value = item;
   displayModal.value = true;
 };
-
-const accommodations = [
-  {
-    title: 'Vedic Dham',
-    description: 'Em Rishikesh, nossa casa será o Vedic Dham, um Ashram tradicional que une o charme da hospitalidade indiana ao conforto que buscamos. Estrategicamente localizado em Lakshman Jhula, o coração vibrante da cidade, o local oferece o privilégio de estar às margens do Rio Ganges. Da nossa sala de yoga, é possível contemplar as águas límpidas em tons de esmeralda, criando o cenário perfeito para a prática e a meditação.',
-    image: 'acomodations/acomodations1.png'
-  },
-  {
-    title: 'Paramgati Ashram',
-    description: 'Em Mayapur, desfrutaremos do Paramgati Yoga Ashram, um refúgio de serenidade recém-construído que combina modernidade e aconchego. O espaço se destaca pelo cuidado em cada detalhe: desde os quartos impecáveis e extremamente confortáveis até uma sala de yoga ampla e inspiradora.',
-    image: 'acomodations/parangati.jpeg'
-  },
-  {
-    title: 'Mayfair',
-    description: 'Em Puri, nossa estadia será no prestigiado Mayfair, indiscutivelmente o melhor e mais encantador refúgio da região. O resort é uma verdadeira celebração da cultura local, harmonizando perfeitamente uma estrutura moderna com uma ala tradicional adornada por magníficas esculturas em pedra.',
-    image: 'acomodations/mayfair-heritage.jpg'
-  },
-  {
-    title: 'Ikaki Niwas',
-    description: 'Em Jaipur, seremos acolhidos pelo charme irresistível do Ikaki Niwas, uma hospedagem boutique que nos faz sentir verdadeiramente em casa. Localizado em um refúgio de tranquilidade dentro da "Cidade Rosa", este refúgio combina a hospitalidade calorosa de uma residência tradicional.',
-    image: 'acomodations/ Ikaki_Niwas.png'
-  },
-  {
-    title: 'Jaypee Palace',
-    description: 'Nossa passagem por Agra será emoldurada pelo luxo monumental do Jaypee Palace. Estrategicamente escolhido para nossa única noite na cidade, este hotel cinco estrelas combina a arquitetura mogol com jardins vastos e relaxantes, oferecendo o descanso ideal.',
-    image: 'acomodations/jaypee.jpg'
-  },
-  {
-    title: 'The Lalit Delhi',
-    description: 'Encerraremos a nossa jornada na vibrante capital indiana, hospedados no sofisticado The Lalit Delhi. Estrategicamente localizado em Connaught Place, o centro geográfico e comercial da cidade, o hotel oferece o equilíbrio perfeito entre a elegância contemporânea.',
-    image: 'acomodations/lalitt.png'
-  }
-];
 </script>
 
 <style scoped>
-/* Personalização para remover o header padrão do PrimeVue se desejar um visual mais limpo */
 :deep(.p-dialog-header) {
   background: #fdfcf0;
   border-bottom: none;
   padding: 1rem;
 }
-
 :deep(.p-dialog-content) {
   padding: 0;
 }

@@ -1,9 +1,8 @@
 <template>
-  <section class="w-full overflow-hidden" style="background-color: #fbead8;">
-    
+  <section v-if="content" class="w-full overflow-hidden" style="background-color: #fbead8;">
     <div class="w-full relative shadow-2xl">
       <Carousel 
-        :value="slides" 
+        :value="content.slides" 
         :numVisible="1" 
         :numScroll="1" 
         :circular="true" 
@@ -34,35 +33,22 @@
       </Carousel>
     </div>
   </section>
+  <div v-else class="h-[55vh] flex items-center justify-center bg-[#fbead8]">
+     <p>Carregando slideshow...</p>
+  </div>
 </template>
 
 <script setup>
-const slides = [
-  {
-    title: 'Amanhecer no Ganges',
-    description: 'A energia sagrada de Rishikesh despertando os sentidos e a alma.',
-    image: '1.jpeg'
-  },
-  {
-    title: 'Devoção em Mayapur',
-    description: 'Imersão profunda nos cantos e tradições do Bhakti Yoga.',
-    image: 'Mayapur.webp'
-  },
-  {
-    title: 'O Templo do Sol',
-    description: 'Contemplando a arquitetura milenar de Konark em Puri.',
-    image: '9.jpg'
-  },
-  {
-    title: 'As Cores de Jaipur',
-    description: 'Celebrando a vida e a espiritualidade na cidade rosa.',
-    image: '8.jpeg'
-  }
-];
+const props = defineProps({
+  isPreview: { type: Boolean, default: false }
+})
+
+// Puxamos os dados usando o padrão dual
+const { content } = await useContentSource('slideshow', props.isPreview)
 </script>
 
 <style scoped>
-/* Remove totalmente os paddings e margens que o PrimeVue reserva para as setas */
+/* Mantivemos seus estilos originais de :deep() */
 :deep(.p-carousel-content),
 :deep(.p-carousel-container),
 :deep(.p-carousel-items-content) {
@@ -71,12 +57,10 @@ const slides = [
   border: none !important;
 }
 
-/* Garante que o item do carrossel ocupe 100% sem espaços fantasmas */
 :deep(.p-carousel-item) {
   padding: 0 !important;
 }
 
-/* Estilização das bolinhas (indicadores) que ficam sobre a imagem */
 :deep(.p-carousel-indicators) {
   padding: 1.5rem;
   position: absolute;
