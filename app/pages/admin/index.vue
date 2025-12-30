@@ -1,140 +1,131 @@
 <template>
-  <div class="admin-layout h-screen bg-slate-950 text-slate-200 flex overflow-hidden dark">
+  <div class="admin-layout h-screen bg-slate-950 text-slate-200 flex overflow-hidden dark font-sans">
     <Toast />
 
-    <button 
-      v-if="!isSidebarOpen"
-      @click="toggleSidebar"
-      class="fixed top-4 left-4 z-50 w-10 h-10 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-500 flex items-center justify-center transition-all animate-in fade-in zoom-in"
-    >
-      <i class="pi pi-bars"></i>
-    </button>
+    <aside class="w-14 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-4 z-50 shrink-0 shadow-2xl">
+      
+      <button 
+        @click="toggleSidebar"
+        :class="[
+          'p-3 mb-2 transition-all duration-200 rounded-lg group relative', 
+          isSidebarOpen ? 'text-indigo-400' : 'text-slate-500 hover:text-white'
+        ]"
+        title="Explorer (Ctrl+B)"
+      >
+        <div v-if="isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        
+        <i class="pi pi-copy text-xl"></i>
+      </button>
+
+      <button 
+        @click="openPreview"
+        class="p-3 mb-2 text-slate-500 hover:text-indigo-400 transition-all rounded-lg"
+        title="Ver Site"
+      >
+        <i class="pi pi-desktop text-xl"></i>
+      </button>
+
+      <div class="flex-1"></div>
+
+      <button 
+        @click="logout"
+        class="p-3 mb-2 text-slate-400 hover:text-red-400 transition-all rounded-lg group"
+        title="Sair"
+      >
+        <i class="pi pi-sign-out text-xl group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </aside>
 
     <aside 
       :class="[
-        'bg-slate-900 border-r border-slate-800 flex flex-col shadow-xl h-screen transition-all duration-300 ease-in-out overflow-hidden shrink-0',
-        isSidebarOpen ? 'w-72' : 'w-0 border-none'
+        'bg-slate-900 border-r border-slate-800 flex flex-col h-screen transition-all duration-300 ease-in-out overflow-hidden shrink-0',
+        isSidebarOpen ? 'w-48' : 'w-0 border-none'
       ]"
     >
-      <div class="p-5 border-b border-slate-800 bg-slate-900/50 flex-none flex justify-between items-center whitespace-nowrap">
-        <h2 class="text-xl font-bold flex items-center gap-3 text-indigo-400 uppercase tracking-tighter">
-          <i class="pi pi-database text-2xl"></i> India CMS
-        </h2>
-        <button @click="toggleSidebar" class="text-slate-500 hover:text-white transition-colors p-1">
-          <i class="pi pi-angle-double-left text-xl"></i>
+      <div class="p-3 border-b border-slate-800 flex justify-between items-center h-12 bg-slate-900">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Explorer</span>
+        <button @click="toggleSidebar" class="text-slate-600 hover:text-indigo-400 transition-colors">
+          <i class="pi pi-angle-left text-lg"></i>
         </button>
       </div>
       
-      <div class="p-5 flex-none" v-if="isSidebarOpen">
-        <div class="relative group">
-          <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+      <div class="p-2">
+        <div class="relative">
+          <i class="pi pi-search absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 text-[10px]"></i>
           <input 
             v-model="searchQuery"
             type="text" 
-            placeholder="Filtrar arquivos..." 
-            class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
+            placeholder="Filtrar..." 
+            class="w-full bg-slate-950 border border-slate-800 rounded py-1 pl-6 pr-2 text-[11px] text-slate-400 focus:outline-none focus:border-indigo-600"
           />
         </div>
       </div>
       
-      <nav class="flex-1 overflow-y-auto custom-scrollbar bg-slate-950/20 whitespace-nowrap" v-if="isSidebarOpen">
-        <ul class="flex flex-col p-2 m-0 list-none">
+      <nav class="flex-1 overflow-y-auto custom-scrollbar">
+        <ul class="m-0 p-0 list-none">
           <li 
             v-for="file in filteredFiles" 
             :key="file.id"
             @click="selectedFile = file"
             :class="[
-              'group flex items-center justify-between p-3 mb-1 rounded-lg cursor-pointer transition-all border border-transparent',
-              selectedFile?.id === file.id ? 'bg-indigo-600/20 border-indigo-500/40 shadow-lg' : 'hover:bg-slate-800'
+              'flex items-center gap-2 px-3 py-2 cursor-pointer text-[12px] transition-all',
+              selectedFile?.id === file.id ? 'bg-indigo-600/10 text-indigo-300 border-l-2 border-indigo-500' : 'hover:bg-slate-800/50 text-slate-500 hover:text-slate-300'
             ]"
           >
-            <div class="flex items-center gap-4">
-              <div :class="['w-10 h-10 rounded-lg flex items-center justify-center transition-all', selectedFile?.id === file.id ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500']">
-                <i :class="[file.icon || 'pi pi-file', 'text-lg']"></i>
-              </div>
-              <div class="flex flex-col">
-                <span class="text-[14px] font-bold tracking-wide">{{ file.label }}</span>
-                <span class="text-[10px] text-slate-600 font-mono">{{ file.id }}.md</span>
-              </div>
-            </div>
+            <i :class="[file.icon || 'pi pi-file', 'text-[12px]']"></i>
+            <span class="truncate font-medium">{{ file.label }}</span>
           </li>
         </ul>
       </nav>
-
-      <div class="p-4 bg-slate-950 border-t border-slate-800 whitespace-nowrap" v-if="isSidebarOpen">
-        <span class="flex items-center gap-1.5 text-[10px] text-green-500">
-           <i class="pi pi-circle-fill text-[8px]"></i> PM2: ONLINE
-        </span>
-      </div>
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
-      
-      <header class="bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-          <i class="pi pi-file-edit text-xl text-indigo-500"></i>
-          <h1 class="text-sm font-mono font-bold text-slate-400">
-            editando: <span class="text-indigo-300">content/{{ selectedFile?.id }}.md</span>
-          </h1>
-          <button
-    @click="logout"
-    class="  text-white rounded-md  transition-colors"
-  >
-    Sair (Logout)
-  </button>
+      <header class="bg-slate-900 border-b border-slate-800 flex items-center justify-between pr-4 h-12">
+        <div class="flex items-center h-full">
+          <div class="bg-slate-950 border-t-2 border-indigo-500 px-6 h-full flex items-center gap-3 border-r border-slate-800">
+            <i class="pi pi-file-edit text-indigo-400 text-lg"></i>
+            <span class="text-[12px] font-mono font-medium text-slate-300">
+              {{ selectedFile?.id }}.md
+            </span>
+          </div>
         </div>
-        <div v-if="pending" class="text-xs text-indigo-400 animate-pulse">
-          Carregando...
+        <div v-if="pending" class="flex items-center gap-2 text-[10px] font-mono text-indigo-400">
+          <i class="pi pi-spin pi-spinner"></i>
         </div>
       </header>
 
-      <section class="flex-1 p-6 flex flex-col overflow-hidden">
-        <div class="bg-slate-900 rounded-t-xl border border-slate-800 flex-1 flex flex-col shadow-2xl">
-          <div class="px-4 py-2 bg-slate-800/50 border-b border-slate-800 flex justify-between items-center rounded-t-xl">
-             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Markdown Editor (Full Content)</span>
-             <i class="pi pi-code text-slate-600"></i>
-          </div>
-          
-          <Textarea 
+      <section class="flex-1 relative flex flex-col overflow-hidden">
+        <div class="relative flex-1 w-full overflow-hidden bg-slate-950">
+          <div 
+            ref="highlightRef"
+            class="absolute inset-0 p-8 font-mono text-[15px] leading-relaxed whitespace-pre-wrap break-words pointer-events-none text-slate-500 z-0 overflow-y-auto scrollbar-hide"
+            v-html="highlightedContent"
+          ></div>
+
+          <textarea 
+            ref="textareaRef"
             v-model="rawText" 
-            class="flex-1 w-full p-5 font-mono text-sm leading-relaxed border-none focus:ring-0 resize-none bg-slate-900 text-slate-300"
+            @scroll="syncScroll"
+            class="absolute inset-0 w-full h-full p-8 font-mono text-[15px] leading-relaxed border-none focus:ring-0 resize-none bg-transparent text-transparent caret-indigo-400 z-10 overflow-y-auto"
             spellcheck="false"
-            :autoResize="false"
-          />
+          ></textarea>
         </div>
 
-        <footer class="bg-slate-900 border border-slate-800 p-4 rounded-b-xl flex justify-between items-center shadow-lg">
-          <div class="text-[11px] text-slate-500 italic max-w-xs">
-            Certifique-se de manter os delimitadores <code class="text-indigo-400">---</code> do Frontmatter.
+        <footer class="bg-indigo-600 h-8 flex justify-between items-center px-4 text-white shrink-0 z-20">
+          <div class="flex items-center gap-6 text-[11px] font-semibold">
+            <span class="opacity-80">Nuxt 3 + SQLite</span>
           </div>
           
-          <div class="flex gap-3 items-center">
-            <Button 
-              label="Preview" 
-              icon="pi pi-external-link" 
-              outlined 
-              severity="secondary"
-              class="p-button-sm border-slate-700 text-slate-400"
-              @click="openPreview"
-            />
-            
-            <Button 
-              label="Salvar" 
-              icon="pi pi-save" 
-              class="p-button-sm bg-indigo-600 border-none"
-              :loading="isSaving"
-              @click="saveFile"
-            />
-
-            <div class="h-8 w-[1px] bg-slate-800 mx-1"></div>
-
-            <Button 
-              label="Publicar" 
-              icon="pi pi-cloud-upload" 
-              severity="success"
-              class="p-button-sm"
-              @click="publishSite"
-            />
+          <div class="flex items-center h-full">
+            <button @click="openPreview" class="bg-indigo-500 hover:bg-indigo-400 px-5 h-full text-[11px] font-bold flex items-center gap-2 border-l border-white/10">
+              <i class="pi pi-eye text-[12px]"></i> PREVIEW
+            </button>
+            <button @click="saveFile" :disabled="isSaving" class="bg-indigo-700 hover:bg-indigo-800 px-5 h-full text-[11px] font-bold flex items-center gap-2 border-l border-white/10">
+              <i :class="isSaving ? 'pi pi-spin pi-spinner' : 'pi pi-save'"></i> SALVAR
+            </button>
+            <button @click="publishSite" class="bg-emerald-600 hover:bg-emerald-700 px-5 h-full text-[11px] font-bold flex items-center gap-2 border-l border-white/10">
+              <i class="pi pi-upload"></i> PUBLICAR
+            </button>
           </div>
         </footer>
       </section>
@@ -143,7 +134,8 @@
 </template>
 
 <script setup>
-// Garante que o layout seja o admin (independente do site)
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const toast = useToast()
@@ -153,26 +145,29 @@ const pending = ref(false)
 const searchQuery = ref('')
 const isSidebarOpen = ref(true)
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
+const textareaRef = ref(null)
+const highlightRef = ref(null)
+
+const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value }
+const openPreview = () => window.open('/?preview=true', '_blank')
+
+const syncScroll = (e) => {
+  if (highlightRef.value && e.target) {
+    highlightRef.value.scrollTop = e.target.scrollTop
+  }
 }
 
-async function logout() {
-  await $fetch('/api/auth/logout', { method: 'POST' })
-  useState('auth_user').value = null // Limpa o estado global
-  window.location.href = '/admin/login' // Redireciona limpando tudo
-}
+const highlightedContent = computed(() => {
+  if (!rawText.value) return ''
+  const fmRegex = /^(---\n[\s\S]*?\n---)/
+  let escaped = rawText.value
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-// Computed que filtra a lista original baseada no que foi digitado
-const filteredFiles = computed(() => {
-  if (!searchQuery.value) return contentFiles
-  
-  const query = searchQuery.value.toLowerCase()
-  return contentFiles.filter(file => 
-    file.label.toLowerCase().includes(query) || 
-    file.id.toLowerCase().includes(query)
-  )
+  return escaped.replace(fmRegex, (match) => {
+    return `<span class="text-indigo-400 font-bold">${match}</span>`
+  })
 })
+
 const contentFiles = [
   { label: 'SlideShow', id: 'slideshow', icon: 'pi pi-images' },
   { label: 'Bem-vindo', id: 'welcome', icon: 'pi pi-home' },
@@ -187,141 +182,77 @@ const contentFiles = [
 
 const selectedFile = ref(contentFiles[0])
 
-const loadFile = async (fileId) => {
-  if (!fileId) return
+const filteredFiles = computed(() => {
+  const q = searchQuery.value.toLowerCase()
+  return contentFiles.filter(f => f.label.toLowerCase().includes(q) || f.id.toLowerCase().includes(q))
+})
+
+const loadFile = async (id) => {
   pending.value = true
-  
-  console.log('Tentando carregar arquivo:', fileId) // DEBUG
-  
   try {
-    // Importante: use a URL completa da API
-    const data = await $fetch(`/api/content/${fileId}`)
-    
-    console.log('Dados recebidos da API:', data) // DEBUG
-    
-    if (data && data.rawContent !== undefined) {
-      rawText.value = data.rawContent
-    } else {
-      console.error('Resposta da API não tem a chave rawContent')
-    }
+    const data = await $fetch(`/api/content/${id}`)
+    rawText.value = data?.rawContent || ''
   } catch (e) {
-    console.error('Erro no fetch:', e)
-    toast.add({ severity: 'error', summary: 'Erro de Conexão', detail: 'Verifique o console do navegador.' })
+    console.error(e)
   } finally {
     pending.value = false
   }
 }
 
-// WATCH: Sempre que mudar a seleção no Listbox, carrega o novo arquivo
-watch(() => selectedFile.value, (newVal) => {
-  if (newVal) loadFile(newVal.id)
-}, { immediate: true }) // immediate garante que carregue o primeiro ao abrir a página
-
 const saveFile = async () => {
-  if (!selectedFile.value) return
+  if (!selectedFile.value || isSaving.value) return
   isSaving.value = true
   try {
     await $fetch(`/api/content/${selectedFile.value.id}`, {
       method: 'POST',
       body: { content: rawText.value }
     })
-    toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Arquivo salvo com sucesso!', life: 2000 })
+    toast.add({ severity: 'success', summary: 'Salvo!', life: 1000 })
   } catch (e) {
-    toast.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao salvar as alterações.' })
+    toast.add({ severity: 'error', summary: 'Erro' })
   } finally {
     isSaving.value = false
   }
 }
 
-const openPreview = () => window.open('/?preview=true', '_blank')
-const isPublishing = ref(false)
+const handleKeydown = (e) => {
+  const mod = e.ctrlKey || e.metaKey
+  if (mod && e.key === 's') { e.preventDefault(); saveFile() }
+  if (mod && e.key === 'b') { e.preventDefault(); toggleSidebar() }
+}
+
+onMounted(() => { window.addEventListener('keydown', handleKeydown) })
+onUnmounted(() => { window.removeEventListener('keydown', handleKeydown) })
+
+watch(selectedFile, (newVal) => { if (newVal) loadFile(newVal.id) }, { immediate: true })
 
 const publishSite = async () => {
-  const confirmar = confirm("Isso irá reconstruir todo o site para aplicar as mudanças permanentemente. O processo pode levar um minuto. Continuar?")
-  
-  if (!confirmar) return
-
-  isPublishing.value = true
-  
-  // Criamos um toast infinito para o build
-  toast.add({ 
-    severity: 'info', 
-    summary: 'Publicando...', 
-    detail: 'O servidor está executando o build. Por favor, aguarde.', 
-    group: 'sticky' // Se você tiver um template de toast fixo
-  })
-
+  if (!confirm("Publicar agora?")) return
   try {
-    const response = await $fetch('/api/content/publish', { method: 'POST' })
-    
-    toast.removeAllGroups() // Remove o aviso de carregamento
-    toast.add({ 
-      severity: 'success', 
-      summary: 'Site Atualizado!', 
-      detail: 'O build foi concluído e a versão final está no ar.', 
-      life: 10000 
-    })
+    await $fetch('/api/content/publish', { method: 'POST' })
+    toast.add({ severity: 'success', summary: 'Site Publicado!' })
   } catch (e) {
-    toast.removeAllGroups()
-    toast.add({ 
-      severity: 'error', 
-      summary: 'Erro no Build', 
-      detail: e.statusMessage || 'Ocorreu um erro ao executar npm run build no servidor.', 
-      life: 10000 
-    })
-  } finally {
-    isPublishing.value = false
+    toast.add({ severity: 'error', summary: 'Erro' })
   }
+}
+
+const logout = async () => {
+  if (!confirm("Sair?")) return
+  await $fetch('/api/auth/logout', { method: 'POST' })
+  window.location.href = '/admin/login'
 }
 </script>
 
 <style scoped>
-/* Ajuste fino no Textarea para Dark Mode total */
-:deep(.p-inputtextarea) {
-  background-color: transparent !important;
-  color: #cbd5e1 !important; /* slate-300 */
-  border: none !important;
+textarea {
   outline: none !important;
   box-shadow: none !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
-
-/* Garante que o container do editor preencha o espaço */
-.bg-slate-900.rounded-t-xl {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Animação suave para a transição de arquivos */
-textarea {
-  transition: opacity 0.2s ease-in-out;
-}
-
-/* Garante que o Listbox ocupe 100% do espaço vertical disponível na sidebar */
-:deep(.p-listbox) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-:deep(.p-listbox-wrapper) {
-  flex-grow: 1;
-}
-
-/* Scrollbar estilizada para não quebrar o visual Dark */
-.custom-scrollbar :deep(.p-listbox-wrapper)::-webkit-scrollbar {
-  width: 4px;
-}
-
-.custom-scrollbar :deep(.p-listbox-wrapper)::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar :deep(.p-listbox-wrapper)::-webkit-scrollbar-thumb {
-  background: #334155; /* slate-700 */
-  border-radius: 10px;
-}
-
-.custom-scrollbar :deep(.p-listbox-wrapper)::-webkit-scrollbar-thumb:hover {
-  background: #475569; /* slate-600 */
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+textarea::-webkit-scrollbar { width: 8px; }
+textarea::-webkit-scrollbar-track { background: #020617; }
+textarea::-webkit-scrollbar-thumb { background: #1e293b; }
+.custom-scrollbar::-webkit-scrollbar { width: 2px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
 </style>
