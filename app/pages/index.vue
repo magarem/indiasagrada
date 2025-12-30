@@ -4,7 +4,7 @@
     <div v-if="isPreviewMode" class="preview-bar">
       <div class="flex items-center justify-center gap-3">
         <i class="pi pi-exclamation-triangle animate-pulse"></i>
-        <span>MODO PREVIEW ATIVO (Lendo arquivos direto do disco)</span>
+        <span>MODO PREVIEW ATIVO</span>
         <a href="/" class="exit-btn">Sair do Preview</a>
       </div>
     </div>
@@ -32,7 +32,7 @@
     <TeachersSection :is-preview="isPreviewMode" />
     <PhotoAlbum :is-preview="isPreviewMode" />
     <Depoimentos :is-preview="isPreviewMode" />
-   
+    <FaqSection :is-preview="isPreviewMode" />
     <div id="investimento" class="scroll-mt-14">
       <InvestimentSection :is-preview="isPreviewMode" />
     </div>
@@ -60,7 +60,7 @@ useHead({
   left: 0;
   width: 100%;
   z-index: 10000;
-  background-color: #ea580c; /* orange-600 */
+  background-color: #1c0855; /* orange-600 */
   color: white;
   text-align: center;
   padding: 8px 0; /* py-2 */

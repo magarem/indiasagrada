@@ -2,7 +2,7 @@
 
 echo "🚀 Iniciando build com Bun..."
 # 1. Gera a versão estática
-bun run generate
+bun run build
 
 # 2. Limpa zip antigo local e cria o novo
 echo "📦 Compactando arquivos..."

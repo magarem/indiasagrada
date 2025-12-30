@@ -7,7 +7,7 @@
       @click="toggleSidebar"
       class="fixed top-4 left-4 z-50 w-10 h-10 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-500 flex items-center justify-center transition-all animate-in fade-in zoom-in"
     >
-      <i class="pi pi-bars">ddd</i>
+      <i class="pi pi-bars"></i>
     </button>
 
     <aside 
@@ -76,6 +76,12 @@
           <h1 class="text-sm font-mono font-bold text-slate-400">
             editando: <span class="text-indigo-300">content/{{ selectedFile?.id }}.md</span>
           </h1>
+          <button
+    @click="logout"
+    class="  text-white rounded-md  transition-colors"
+  >
+    Sair (Logout)
+  </button>
         </div>
         <div v-if="pending" class="text-xs text-indigo-400 animate-pulse">
           Carregando...
@@ -138,7 +144,7 @@
 
 <script setup>
 // Garante que o layout seja o admin (independente do site)
-definePageMeta({ layout: 'admin' })
+definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const toast = useToast()
 const rawText = ref('')
@@ -150,6 +156,13 @@ const isSidebarOpen = ref(true)
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
 }
+
+async function logout() {
+  await $fetch('/api/auth/logout', { method: 'POST' })
+  useState('auth_user').value = null // Limpa o estado global
+  window.location.href = '/admin/login' // Redireciona limpando tudo
+}
+
 // Computed que filtra a lista original baseada no que foi digitado
 const filteredFiles = computed(() => {
   if (!searchQuery.value) return contentFiles
