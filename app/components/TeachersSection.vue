@@ -17,7 +17,7 @@
           <div class="relative mb-8">
             <div class="relative w-64 h-64 overflow-hidden rounded-full border-4 border-white shadow-xl">
               <img 
-                :src="`/images/${teacher.image}`" 
+                :src="`/images/${teacher.image || teacher.meta?.image}`" 
                 :alt="teacher.name"
                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
