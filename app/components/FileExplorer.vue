@@ -1,144 +1,214 @@
 <template>
-  <nav class="flex-1 overflow-y-auto custom-scrollbar bg-slate-950/20">
-    <ul class="m-0 p-0 list-none">
-      <li v-if="status === 'pending'" class="p-6 text-center text-slate-500">
-        <i class="pi pi-spin pi-spinner text-lg"></i>
-      </li>
+  <div class="flex flex-col h-full bg-slate-950/20">
+    
+    
 
-      <template v-for="group in structuredFiles" :key="group.id">
-        <li 
-          v-if="group.isFolder" 
-          @click="toggleFolder(group.id)"
-          class="px-3 py-2 text-[14px] uppercase tracking-wider text-slate-500 font-bold bg-slate-900/40 mt-2 flex items-center gap-2 cursor-pointer hover:bg-slate-800 transition-colors select-none"
-        >
-          <i :class="[
-            'pi transition-transform duration-200', 
-            openFolders.has(group.id) ? 'pi-chevron-down' : 'pi-chevron-right',
-            'text-[12px] text-slate-600'
-          ]"></i>
-          <i :class="[
-            openFolders.has(group.id) ? 'pi-folder-open text-indigo-400' : 'pi-folder text-indigo-400/60'
-          ]"></i>
-          {{ group.label }}
-        </li>
 
-        <transition-group name="folder-content">
-          <li 
-            v-for="file in group.files" 
-            v-if="!group.isFolder || openFolders.has(group.id)"
-            :key="file.path"
-            @click="selectFile(file)"
-            :class="[
-              'flex items-center gap-2 px-3 py-2 cursor-pointer text-[16px] transition-all group',
-              group.isFolder ? 'pl-9' : 'pl-3', 
-              modelValue?.path === file.path 
-                ? 'bg-indigo-600/10 text-indigo-300 border-l-2 border-indigo-500' 
-                : 'hover:bg-slate-800/50 text-slate-500 hover:text-slate-300'
-            ]"
-          >
-            <i :class="[getFileIcon(file), 'text-[12px] group-hover:scale-110 transition-transform']"></i>
-            <span class="truncate font-medium">{{ formatLabel(file.path) }}</span>
-            
-            <span v-if="file.path.includes('_index')" 
-                  class="ml-auto text-[8px] bg-indigo-500/20 px-1 rounded text-indigo-400 border border-indigo-500/30">
-              META
-            </span>
-          </li>
-        </transition-group>
+    <div class="px-4 py-3 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
+      <div class="flex items-center gap-2">
+        <i :class="[sectionInfo.icon, 'text-indigo-400 text-sm']"></i>
+        <h2 class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200">
+          {{ sectionInfo.title }}
+        </h2>
+      </div>
+    </div>
 
-      </template>
-    </ul>
-  </nav>
+    
+    <div class="p-2 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+      <div class="flex items-center gap-1">
+        <button @click="refresh" class="p-2 hover:bg-slate-800 rounded text-slate-400" title="Atualizar">
+          <i :class="['pi pi-refresh text-[10px]', pending ? 'pi-spin' : '']"></i>
+        </button>
+        <div class="w-px h-3 bg-slate-700 mx-1"></div>
+        <button @click="viewMode = 'list'" :class="['p-2 rounded transition-colors', viewMode === 'list' ? 'bg-slate-800 text-indigo-400' : 'text-slate-500']">
+          <i class="pi pi-list text-[10px]"></i>
+        </button>
+        <button @click="viewMode = 'grid'" :class="['p-2 rounded transition-colors', viewMode === 'grid' ? 'bg-slate-800 text-indigo-400' : 'text-slate-500']">
+          <i class="pi pi-th-large text-[10px]"></i>
+        </button>
+      </div>
+      
+      <span class="text-[9px] font-mono text-slate-600 truncate max-w-[100px]">
+        {{ currentPath || '/' }}
+      </span>
+    </div>
+
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+      <div :class="viewMode === 'grid' ? 'grid grid-cols-2 gap-2' : 'flex flex-col gap-0.5'">
+        
+        <div v-if="currentPath" @click="goBack" 
+             class="flex items-center gap-2 p-2 cursor-pointer hover:bg-slate-800/50 rounded text-slate-500 text-[11px] border border-transparent hover:border-slate-700">
+          <i class="pi pi-arrow-up text-[10px]"></i> <span class="font-mono">..</span>
+        </div>
+
+        <div v-for="item in files" :key="item.path" 
+             @click="handleItemClick(item)"
+             :class="[
+               'group relative rounded border transition-all cursor-pointer overflow-hidden',
+               viewMode === 'grid' ? 'flex flex-col items-center p-3 text-center min-h-[100px] justify-center' : 'flex items-center gap-3 px-3 py-2',
+               modelValue?.path === item.path ? 'border-indigo-500/50 bg-indigo-500/10' : 'border-transparent hover:bg-slate-800/40 hover:border-slate-800'
+             ]">
+          
+
+<div :class="viewMode === 'grid' ? 'mb-2 h-12 w-full flex items-center justify-center' : 'shrink-0 w-5 flex justify-center'">
+  
+  <template v-if="item.isDirectory">
+    <div v-if="viewMode === 'grid'" class="relative flex flex-col items-center">
+      <i class="pi pi-folder text-4xl text-amber-500/80 drop-shadow-md"></i>
+      <i class="pi pi-plus absolute -bottom-1 -right-1 text-[10px] bg-slate-900 rounded-full p-0.5 text-amber-200 border border-amber-500/30"></i>
+    </div>
+    <i v-else class="pi  text-amber-500 text-base"></i>
+  </template>
+
+  <template v-else-if="isImage(item.name)">
+    <img v-if="viewMode === 'grid'" :src="item.path" class="w-full h-12 object-cover rounded bg-slate-900 shadow-inner border border-slate-800" />
+    <i v-else class="pi pi-image text-indigo-400 text-sm"></i>
+  </template>
+
+  <template v-else>
+    <i :class="[getFileIcon(item.name), viewMode === 'grid' ? 'text-2xl' : 'text-sm']"></i>
+  </template>
+</div>
+
+
+
+
+
+
+          <div class="flex-1 min-w-0">
+            <p :class="['text-[15px] truncate', item.isDirectory ? 'font-bold text-slate-300' : 'text-slate-400 group-hover:text-slate-200']">
+              {{ formatLabel(item.name) }}
+            </p>
+          </div>
+
+          <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 flex gap-0.5 bg-slate-900/90 backdrop-blur-sm rounded border border-slate-700 p-0.5 shadow-xl transition-opacity">
+            <button @click.stop="renameItem(item)" class="p-1 hover:text-indigo-400 text-slate-500 transition-colors" title="Renomear">
+              <i class="pi pi-pencil text-[8px]"></i>
+            </button>
+            <button @click.stop="deleteItem(item)" class="p-1 hover:text-red-400 text-slate-500 transition-colors" title="Excluir">
+              <i class="pi pi-trash text-[8px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <div v-if="files.length === 0 && !pending" class="py-10 text-center opacity-30">
+          <i class="pi pi-folder-open text-2xl mb-2"></i>
+          <p class="text-[10px] uppercase tracking-widest">Pasta Vazia</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 const props = defineProps({
+  basePath: { type: String, required: true }, // 'content', 'app/components' ou 'public/images'
   modelValue: { type: Object, default: null }
 });
 
-const emit = defineEmits(['update:modelValue', 'file-selected']);
+const emit = defineEmits(['update:modelValue', 'select']);
 
-// Estado das pastas abertas (usando Set para performance e unicidade)
-const openFolders = ref(new Set(['acomodacoes'])); // 'acomodacoes' vem aberta por padrão
+const viewMode = ref('list'); // Pode ser 'grid' ou 'list'
+const currentPath = ref('');
 
-const toggleFolder = (folderId) => {
-  if (openFolders.value.has(folderId)) {
-    openFolders.value.delete(folderId);
+
+const sectionInfo = computed(() => {
+  const path = props.basePath.toLowerCase();
+  
+  if (path.includes('content')) {
+    return { title: 'Conteúdo (Markdown)', icon: 'pi pi-file-edit' };
+  }
+  if (path.includes('components')) {
+    return { title: 'Componentes Vue', icon: 'pi pi-box' };
+  }
+  if (path.includes('pages')) {
+    return { title: 'Páginas / Rotas', icon: 'pi pi-sitemap' };
+  }
+  if (path.includes('layouts')) {
+    return { title: 'Layouts da Estrutura', icon: 'pi pi-clone' };
+  }
+  if (path.includes('images') || path.includes('public')) {
+    return { title: 'Banco de Imagens', icon: 'pi pi-images' };
+  }
+  
+  return { title: 'Arquivos', icon: 'pi pi-folder' };
+});
+
+// Fetch automático dos arquivos baseado no basePath e no subpath atual
+const { data: filesData, pending, refresh } = await useFetch('/api/fs/list', {
+  query: { 
+    base: props.basePath, 
+    sub: currentPath 
+  },
+  watch: [currentPath] // Recarrega sempre que mudar de pasta
+});
+
+const files = computed(() => filesData.value || []);
+
+const handleItemClick = (item) => {
+  if (item.isDirectory) {
+    currentPath.value = currentPath.value ? `${currentPath.value}/${item.name}` : item.name;
   } else {
-    openFolders.value.add(folderId);
+    emit('update:modelValue', item);
+    emit('select', item);
   }
 };
 
-// 1. Busca os arquivos da coleção 'content'
-const { data: allFiles, status, refresh } = await useAsyncData('admin-file-explorer', () => 
-  queryCollection('content').all()
-);
-
-// 2. Estruturação (Igual à anterior, agrupando por pasta ou root)
-const structuredFiles = computed(() => {
-  if (!allFiles.value) return [];
-
-  const groups = allFiles.value.reduce((acc, file) => {
-    const parts = file.path.split('/').filter(p => p);
-    const isInsideFolder = parts.length > 1;
-    const groupKey = isInsideFolder ? parts[0] : 'root';
-
-    if (!acc[groupKey]) {
-      acc[groupKey] = {
-        id: groupKey,
-        label: isInsideFolder ? groupKey : 'Arquivos Raiz',
-        isFolder: isInsideFolder,
-        files: []
-      };
-    }
-    acc[groupKey].files.push(file);
-    return acc;
-  }, {});
-
-  return Object.values(groups).sort((a, b) => {
-    if (a.id === 'root') return 1;
-    if (b.id === 'root') return -1;
-    return a.label.localeCompare(b.label);
-  });
-});
-
-// Helpers
-const getFileIcon = (file) => {
-  if (file.path.includes('_index')) return 'pi pi-cog text-orange-400';
-  if (file.path.endsWith('.vue')) return 'pi pi-code text-emerald-400';
-  return 'pi pi-file-edit text-slate-400';
+const goBack = () => {
+  const parts = currentPath.value.split('/').filter(Boolean);
+  parts.pop();
+  currentPath.value = parts.join('/');
 };
 
-const formatLabel = (path) => {
-  const name = path.split('/').pop() || '';
+// Helpers de Interface
+const isImage = (name) => /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(name);
+
+const getFileIcon = (name) => {
+  if (name.endsWith('.vue')) return 'pi pi-code text-emerald-400';
+  if (name.endsWith('.md')) return 'pi pi-file-edit text-indigo-400';
+  if (name.endsWith('.json')) return 'pi pi-database text-amber-400';
+  return 'pi pi-file text-slate-500';
+};
+
+const formatLabel = (name) => {
   return name.replace('.md', '').replace('.vue', '');
 };
 
-const selectFile = (file) => {
-  emit('update:modelValue', file);
-  emit('file-selected', file);
+// --- AÇÕES DE ARQUIVO ---
+const deleteItem = async (item) => {
+  if (!confirm(`Tem certeza que deseja excluir "${item.name}"?`)) return;
+  try {
+    await $fetch('/api/fs/delete', { 
+      method: 'POST', 
+      body: { path: item.path, isDirectory: item.isDirectory } 
+    });
+    refresh();
+  } catch (e) {
+    alert("Erro ao excluir arquivo.");
+  }
+};
+
+const renameItem = async (item) => {
+  const newName = prompt('Novo nome (inclua a extensão):', item.name);
+  if (newName && newName !== item.name) {
+    try {
+      await $fetch('/api/fs/rename', { 
+        method: 'POST', 
+        body: { oldPath: item.path, newName } 
+      });
+      refresh();
+    } catch (e) {
+      alert("Erro ao renomear.");
+    }
+  }
 };
 
 defineExpose({ refresh });
 </script>
 
 <style scoped>
-/* Estilo da barra de rolagem customizada */
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar { width: 3px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-
-/* Animação simples de expandir/recolher */
-.folder-content-enter-active,
-.folder-content-leave-active {
-  transition: all 0.2s ease;
-  max-height: 50px;
-  opacity: 1;
-}
-.folder-content-enter-from,
-.folder-content-leave-to {
-  opacity: 0;
-  max-height: 0;
-  transform: translateX(-10px);
-}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
 </style>

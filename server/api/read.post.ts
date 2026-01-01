@@ -1,15 +1,25 @@
-import fs from 'node:fs'
-import path from 'node:path'
+// server/api/read.post.ts
+import { readFileSync, existsSync } from 'fs'
+import { resolve } from 'path'
 
 export default defineEventHandler(async (event) => {
-  const { filePath } = await readBody(event)
-  const cleanPath = filePath.startsWith('/') ? filePath.substring(1) : filePath
-  const absolutePath = path.resolve(process.cwd(), 'content', `${cleanPath}.md`)
+  const body = await readBody(event)
+  const { filePath } = body
 
-  if (fs.existsSync(absolutePath)) {
-    const content = fs.readFileSync(absolutePath, 'utf-8')
-    return { content }
+  if (!filePath) return { content: '' }
+
+  // Resolve o caminho a partir da raiz do projeto (onde está o nuxt.config)
+  const absolutePath = resolve(process.cwd(), filePath)
+
+  if (existsSync(absolutePath)) {
+    try {
+      const content = readFileSync(absolutePath, 'utf-8')
+      return { content }
+    } catch (e) {
+      throw createError({ statusCode: 500, message: 'Erro ao ler o arquivo físico' })
+    }
+  } else {
+    // Retornamos o path no erro para você debugar no console do navegador
+    throw createError({ statusCode: 404, message: `Arquivo não localizado em: ${absolutePath}` })
   }
-
-  throw createError({ statusCode: 404, statusMessage: 'Arquivo não encontrado' })
 })

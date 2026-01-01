@@ -3,21 +3,30 @@
     <Toast />
 
     <aside class="w-14 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-4 z-50 shrink-0 shadow-2xl">
-     <button 
-    @click="setActiveView('files')"
-    :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'files' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']"
-  >
-    <div v-if="activeView === 'files' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
-    <i class="pi pi-copy text-xl"></i>
-  </button>
+      <button @click="setActiveView('files')" :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'files' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']">
+        <div v-if="activeView === 'files' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        <i class="pi pi-copy text-xl"></i>
+      </button>
 
-  <button 
-    @click="setActiveView('images')"
-    :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'images' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']"
-  >
-    <div v-if="activeView === 'images' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
-    <i class="pi pi-images text-xl"></i>
-  </button>
+      <button @click="setActiveView('images')" :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'images' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']">
+        <div v-if="activeView === 'images' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        <i class="pi pi-images text-xl"></i>
+      </button>
+
+      <button @click="setActiveView('components')" :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'components' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']" v-tooltip.right="'Componentes'">
+        <div v-if="activeView === 'components' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        <i class="pi pi-box text-xl"></i>
+      </button>
+
+      <button @click="setActiveView('pages')" :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'pages' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']" v-tooltip.right="'Páginas'">
+        <div v-if="activeView === 'pages' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        <i class="pi pi-sitemap text-xl"></i>
+      </button>
+
+      <button @click="setActiveView('layouts')" :class="['p-3 mb-2 transition-all duration-200 rounded-lg group relative', (activeView === 'layouts' && isSidebarOpen) ? 'text-indigo-400' : 'text-slate-500 hover:text-white']" v-tooltip.right="'Layouts'">
+        <div v-if="activeView === 'layouts' && isSidebarOpen" class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-indigo-500"></div>
+        <i class="pi pi-clone text-xl"></i>
+      </button>
 
       <button @click="openPreview" class="p-3 mb-2 text-slate-500 hover:text-indigo-400 transition-all rounded-lg" title="Ver Site">
         <i class="pi pi-desktop text-xl"></i>
@@ -32,69 +41,44 @@
 
     <aside :class="['bg-slate-900 border-r border-slate-800 flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0', isSidebarOpen ? 'w-64' : 'w-0 border-none']">
       
-      <div class="p-3 border-b border-slate-800 flex flex-col bg-slate-900 shrink-0">
-        <div class="flex justify-between items-center mb-2 h-6">
-          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            {{ activeView === 'files' ? 'Explorer' : 'Imagens' }}
-          </span>
-          
-          <div v-if="activeView === 'images'" class="flex items-center gap-1">
-            <button @click="createFolder" class="p-1.5 text-slate-500 hover:text-emerald-400" title="Nova Pasta">
-              <i class="pi pi-folder-plus text-xs"></i>
-            </button>
-            <div class="w-px h-3 bg-slate-700 mx-1"></div>
-            <button @click="imageViewMode = 'grid'" :class="['p-1.5 transition-colors', imageViewMode === 'grid' ? 'text-indigo-400' : 'text-slate-600']"><i class="pi pi-th-large text-xs"></i></button>
-            <button @click="imageViewMode = 'list'" :class="['p-1.5 transition-colors', imageViewMode === 'list' ? 'text-indigo-400' : 'text-slate-600']"><i class="pi pi-list text-xs"></i></button>
-          </div>
-        </div>
+    <div class="flex-1 overflow-hidden flex flex-col">
+  <FileExplorer 
+    v-if="activeView === 'files'" 
+    base-path="content" 
+    v-model="selectedFile" 
+  />
 
-        <div v-if="activeView === 'images'" class="flex items-center gap-2 pt-1">
-          <button v-if="currentSubPath" @click="goBack" class="text-indigo-400 hover:text-indigo-300"><i class="pi pi-arrow-left text-[10px]"></i></button>
-          <span class="text-[9px] font-mono text-slate-500 truncate">/images/{{ currentSubPath }}</span>
-        </div>
-      </div>
-      
-      <FileExplorer v-if="activeView === 'files'" v-model="selectedFile" />
+  <FileExplorer 
+    v-else-if="activeView === 'components'" 
+    base-path="app/components" 
+    v-model="selectedFile" 
+  />
 
-      <div v-else class="flex-1 overflow-y-auto p-2 custom-scrollbar flex flex-col">
-        <div @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false" @drop.prevent="handleDrop"
-          :class="['border-2 border-dashed rounded-xl p-4 mb-4 transition-all flex flex-col items-center justify-center text-center cursor-pointer', isDragging ? 'border-indigo-500 bg-indigo-500/10 text-indigo-300' : 'border-slate-800 text-slate-500 hover:border-slate-700']"
-          @click="$refs.fileInput.click()">
-          <input type="file" ref="fileInput" class="hidden" multiple accept="image/*" @change="handleFileSelect" />
-          <i :class="['pi mb-1 text-lg', isUploading ? 'pi-spin pi-spinner text-indigo-400' : 'pi-cloud-upload']"></i>
-          <span class="text-[9px] font-bold uppercase tracking-wider">Upload aqui</span>
-        </div>
+  <FileExplorer 
+    v-else-if="activeView === 'images'" 
+    base-path="public/images" 
+    @select="selectImage"
+    v-model="selectedImage"
+  />
 
-        <div v-if="imageViewMode === 'grid'" class="grid grid-cols-2 gap-2">
-          <div v-for="item in imageList" :key="item.path" @click="item.isDirectory ? handleFolderClick(item) : selectImage(item)"
-            :class="['p-2 rounded border transition-all cursor-pointer group flex flex-col items-center justify-center min-h-[90px]', selectedImage?.path === item.path ? 'border-indigo-500 bg-indigo-500/10' : 'border-transparent hover:bg-slate-800']">
-            <div v-if="item.isDirectory" class="w-full flex-1 flex flex-col items-center justify-center bg-slate-800/40 rounded mb-1">
-              <i class="pi pi-folder text-2xl text-amber-500"></i>
-            </div>
-            <img v-else :src="item.path" class="w-full h-16 object-cover rounded bg-slate-950 mb-1" />
-            <span class="text-[9px] text-slate-400 truncate w-full text-center px-1">{{ item.name }}</span>
-          </div>
-        </div>
+  <FileExplorer 
+    v-else-if="activeView === 'pages'" 
+    base-path="app/pages" 
+    v-model="selectedFile"
+  />
 
-        <div v-else class="space-y-1">
-          <div v-for="item in imageList" :key="item.path" @click="item.isDirectory ? handleFolderClick(item) : selectImage(item)"
-            :class="['px-2 py-1.5 rounded flex items-center justify-between cursor-pointer group', selectedImage?.path === item.path ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-slate-800 text-slate-400']">
-            <div class="flex items-center gap-3 truncate">
-              <i :class="['text-xs', item.isDirectory ? 'pi pi-folder text-amber-500' : 'pi pi-image opacity-50']"></i>
-              <span :class="['text-[11px] truncate font-mono', item.isDirectory ? 'font-bold text-slate-200' : '']">{{ item.name }}{{ item.isDirectory ? '/' : '' }}</span>
-            </div>
-            <button @click.stop="deleteItem(item)" class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-300 p-1"><i class="pi pi-times text-[10px]"></i></button>
-          </div>
-        </div>
-      </div>
+   <FileExplorer 
+    v-else-if="activeView === 'layouts'" 
+    base-path="app/layouts" 
+    v-model="selectedFile"
+  />
+</div>
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
-      
       <div v-if="viewMode === 'image' && selectedImage" class="flex-1 flex flex-col items-center justify-center p-8">
         <div class="relative max-w-4xl w-full text-center">
           <img :src="selectedImage.path" class="max-w-full max-h-[70vh] rounded-lg shadow-2xl border border-slate-800 mx-auto bg-slate-900" />
-          
           <div class="mt-8 flex items-center gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-xl max-w-2xl mx-auto">
             <div class="text-left flex-1 overflow-hidden">
               <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Caminho do Asset</p>
@@ -109,17 +93,24 @@
       </div>
 
       <template v-else>
-        <header class="bg-slate-900 border-b border-slate-800 flex items-center justify-between pr-4 h-12">
-          <div class="flex items-center h-full">
-            <div v-if="selectedFile" class="bg-slate-950 border-t-2 border-indigo-500 px-6 h-full flex items-center gap-3 border-r border-slate-800">
-              <i class="pi pi-file-edit text-indigo-400 text-lg"></i>
-              <span class="text-[12px] font-mono font-medium text-slate-300">{{ selectedFile.path.split('/').pop() }}.md</span>
-            </div>
-          </div>
-          <div v-if="pending || isUploading" class="flex items-center gap-2 text-[10px] font-mono text-indigo-400">
-            <i class="pi pi-spin pi-spinner"></i><span>PROCESSANDO...</span>
-          </div>
-        </header>
+      <header class="bg-slate-900 border-b border-slate-800 flex items-center justify-between pr-4 h-12">
+  <div class="flex items-center h-full">
+    <div v-if="selectedFile" class="bg-slate-950 border-t-2 border-indigo-500 px-6 h-full flex items-center gap-3 border-r border-slate-800">
+      <i :class="[
+        selectedFile.path.endsWith('.vue') ? 'pi pi-box text-blue-400' : 'pi pi-file-edit text-indigo-400', 
+        'text-lg'
+      ]"></i>
+      
+      <span class="text-[12px] font-mono font-medium text-slate-300">
+        {{ selectedFile.path.split('/').pop() }}
+      </span>
+    </div>
+  </div>
+
+  <div v-if="pending || isUploading" class="flex items-center gap-2 text-[10px] font-mono text-indigo-400">
+    <i class="pi pi-spin pi-spinner"></i><span>PROCESSANDO...</span>
+  </div>
+</header>
 
         <section class="flex-1 relative flex flex-col overflow-hidden">
           <div class="relative flex-1 w-full overflow-hidden bg-slate-950">
@@ -146,12 +137,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 definePageMeta({ layout: 'admin', middleware: 'auth' })
 const toast = useToast()
 
-// Estados de Dados
+// --- ESTADOS DE DADOS ---
 const selectedFile = ref(null)
 const rawText = ref('')
 const isSaving = ref(false)
@@ -159,21 +150,61 @@ const pending = ref(false)
 const imageList = ref([])
 const selectedImage = ref(null)
 
-// Estados de Navegação de Imagens
-const currentSubPath = ref('')
-const isDragging = ref(false)
-const isUploading = ref(false)
-const fileInput = ref(null)
+// --- ESTADOS DE COMPONENTES ---
+const componentList = ref([])
+const componentSearch = ref('')
+const isRefreshing = ref(false)
 
-// UI States
+// --- ESTADOS DE UI & NAVEGAÇÃO ---
 const activeView = ref('files')
 const viewMode = ref('editor')
 const imageViewMode = ref('grid')
 const isSidebarOpen = ref(true)
+const currentSubPath = ref('')
+const isDragging = ref(false)
+const isUploading = ref(false)
 const textareaRef = ref(null)
 const highlightRef = ref(null)
 
-// --- MÉTODOS DE IMAGEM & NAVEGAÇÃO ---
+// --- MÉTODOS DE COMPONENTES ---
+const fetchComponents = async () => {
+  try {
+    const data = await $fetch('/api/components-list')
+    componentList.value = data
+  } catch (e) {
+    console.error('Erro ao buscar componentes:', e)
+  }
+}
+
+const refreshComponents = async () => {
+  isRefreshing.value = !isRefreshing.value 
+}
+
+// Essa função abre o arquivo no editor
+const selectComponent = async (compName) => {
+  selectedImage.value = null;
+  viewMode.value = 'editor';
+  
+  selectedFile.value = {
+    path: `app/components/${compName}.vue`,
+    type: 'component'
+  };
+};
+
+const filteredComponents = computed(() => {
+  if (!componentSearch.value) return componentList.value
+  const s = componentSearch.value.toLowerCase()
+  return componentList.value.filter(c => c.toLowerCase().includes(s))
+})
+
+// Essa função apenas copia a tag
+const copyComponentTag = (name) => {
+  const tag = `::${name}\n::`
+  navigator.clipboard.writeText(tag)
+  toast.add({ severity: 'info', summary: 'Tag copiada!', life: 800 })
+}
+
+// --- MÉTODOS DE IMAGEM ---
 const loadImages = async () => {
   try {
     imageList.value = await $fetch('/api/images', { query: { path: currentSubPath.value } })
@@ -233,13 +264,20 @@ const createFolder = async () => {
 
 // --- MÉTODOS DE ARQUIVO ---
 const loadFile = async (file) => {
-  pending.value = true
+  if (!file?.path) return; // Garante que existe um caminho
+  pending.value = true;
   try {
-    const data = await $fetch('/api/read', { method: 'POST', body: { filePath: file.path } })
-    rawText.value = data?.content || ''
-    if (textareaRef.value) textareaRef.value.scrollTop = 0
-  } catch (e) { } finally { pending.value = false }
-}
+    const data = await $fetch('/api/read', { 
+      method: 'POST', 
+      body: { filePath: file.path } 
+    });
+    rawText.value = data?.content || '';
+  } catch (e) {
+    toast.add({ severity: 'error', summary: 'Erro ao ler arquivo', detail: file.path });
+  } finally {
+    pending.value = false;
+  }
+};
 
 const saveFile = async () => {
   if (!selectedFile.value) return
@@ -250,41 +288,57 @@ const saveFile = async () => {
   } catch (e) { } finally { isSaving.value = false }
 }
 
-// --- UTILITÁRIOS & WATCHERS ---
+// --- UTILITÁRIOS ---
+const setActiveView = (view) => {
+  if (activeView.value === view && isSidebarOpen.value) {
+    isSidebarOpen.value = false
+  } else {
+    activeView.value = view
+    isSidebarOpen.value = true
+  }
+}
+
 const copyPath = (path) => {
   navigator.clipboard.writeText(path.replace('/images', ''))
   toast.add({ severity: 'info', summary: 'Caminho copiado!', life: 800 })
 }
 
-// Altere a função de controle de visualização
-const setActiveView = (view) => {
-  if (activeView.value === view && isSidebarOpen.value) {
-    // Se clicar no mesmo ícone com a sidebar aberta, ela fecha
-    isSidebarOpen.value = false;
-  } else {
-    // Se clicar num ícone diferente ou com ela fechada, ela abre no modo correto
-    activeView.value = view;
-    isSidebarOpen.value = true;
-  }
-};
-const toggleSidebar = () => isSidebarOpen.value = !isSidebarOpen.value
 const openPreview = () => window.open('/?preview=true', '_blank')
 const syncScroll = (e) => { if (highlightRef.value) highlightRef.value.scrollTop = e.target.scrollTop }
 
 const highlightedContent = computed(() => {
   if (!rawText.value) return ''
+  
+  // Se for um componente (.vue), usamos uma lógica de cores diferente ou simples
+  if (selectedFile.value?.path.endsWith('.vue')) {
+    let escaped = rawText.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    // Colorir tags HTML/Vue
+    return escaped.replace(/(&lt;\/?[\w-]+.*?&gt;)/g, '<span class="text-indigo-400 font-bold">$1</span>')
+  }
+
+  // Lógica original para Markdown
   const fmRegex = /^(---\n[\s\S]*?\n---)/
   let escaped = rawText.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   return escaped.replace(fmRegex, (match) => `<span class="text-indigo-400 font-bold">${match}</span>`)
 })
 
-watch(selectedFile, (newFile) => { if (newFile) { viewMode.value = 'editor'; selectedImage.value = null; loadFile(newFile) } })
-watch(activeView, (view) => { if (view === 'images') loadImages() })
+// --- WATCHERS ---
+// No seu script setup do arquivo principal
+watch(selectedFile, (f) => {
+  if (f && f.path) {
+    viewMode.value = 'editor';
+    selectedImage.value = null;
+    loadFile(f); // Aqui o f.path já virá "content/nome.md" vindo do explorer
+  }
+});
+watch(activeView, (view) => { 
+  if (view === 'images') loadImages() 
+  // if (view === 'components' && componentList.value.length === 0) fetchComponents()
+})
 
 onMounted(() => {
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile() }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); toggleSidebar() }
   })
 })
 
