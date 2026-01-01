@@ -252,9 +252,10 @@ const saveFile = async () => {
 
 // --- UTILITÁRIOS & WATCHERS ---
 const copyPath = (path) => {
-  navigator.clipboard.writeText(path)
+  navigator.clipboard.writeText(path.replace('/images', ''))
   toast.add({ severity: 'info', summary: 'Caminho copiado!', life: 800 })
 }
+
 // Altere a função de controle de visualização
 const setActiveView = (view) => {
   if (activeView.value === view && isSidebarOpen.value) {

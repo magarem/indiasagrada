@@ -1,6 +1,6 @@
 ---
 title: "The Lalit Delhi"
-image: "acomodations/lalitt.png"
+image: /acomodations/lalitt.png
 location: "Delhi"
 ---
 

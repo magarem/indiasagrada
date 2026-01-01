@@ -9,12 +9,12 @@
         <li 
           v-if="group.isFolder" 
           @click="toggleFolder(group.id)"
-          class="px-3 py-2 text-[10px] uppercase tracking-wider text-slate-500 font-bold bg-slate-900/40 mt-2 flex items-center gap-2 cursor-pointer hover:bg-slate-800 transition-colors select-none"
+          class="px-3 py-2 text-[14px] uppercase tracking-wider text-slate-500 font-bold bg-slate-900/40 mt-2 flex items-center gap-2 cursor-pointer hover:bg-slate-800 transition-colors select-none"
         >
           <i :class="[
             'pi transition-transform duration-200', 
             openFolders.has(group.id) ? 'pi-chevron-down' : 'pi-chevron-right',
-            'text-[8px] text-slate-600'
+            'text-[12px] text-slate-600'
           ]"></i>
           <i :class="[
             openFolders.has(group.id) ? 'pi-folder-open text-indigo-400' : 'pi-folder text-indigo-400/60'
@@ -29,7 +29,7 @@
             :key="file.path"
             @click="selectFile(file)"
             :class="[
-              'flex items-center gap-2 px-3 py-2 cursor-pointer text-[12px] transition-all group',
+              'flex items-center gap-2 px-3 py-2 cursor-pointer text-[16px] transition-all group',
               group.isFolder ? 'pl-9' : 'pl-3', 
               modelValue?.path === file.path 
                 ? 'bg-indigo-600/10 text-indigo-300 border-l-2 border-indigo-500' 

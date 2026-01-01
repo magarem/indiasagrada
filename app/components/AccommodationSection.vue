@@ -3,60 +3,30 @@ const props = defineProps({
   isPreview: { type: Boolean, default: false }
 })
 
+// Precisamos usar props.isPreview para o Nuxt entender de onde vem o valor
 const displayModal = ref(false);
 const selectedItem = ref(null);
 
-// 1. Busca os metadados da seção (onde está o layout_order)
-const { data: sectionData } = await useAsyncData('acomodacoes-meta', () => 
-  queryCollection('content')
-    .path('/acomodacoes/_index')
-    .first()
-)
 
-// 2. Busca os arquivos individuais das acomodações
-const { data: accommodationsItems } = await useAsyncData('acomodacoes-list', () => 
-  queryCollection('content')
-    .where('path', 'LIKE', '/acomodacoes/%')
-    .where('path', '<>', '/acomodacoes/_index')
-    .all()
-)
+// 1. Dados da Seção
+// Adicionamos props.isPreview na chave para evitar cache entre modos
+// Inicializa o gerenciador para a pasta 'acomodacoes'
+const { getSectionData, getContentList, getSortedList } = useContentManager('acomodacoes', props.isPreview)
 
-const sortedAccommodations = computed(() => {
-  if (!accommodationsItems.value) return []
-  
-  // No Nuxt v3, os dados customizados costumam ficar em .meta ou na raiz
-  // Vamos garantir que estamos pegando o array certo
-  const order = sectionData.value?.layout_order || sectionData.value?.meta?.layout_order
-  
-  if (!order || !Array.isArray(order)) {
-    console.warn('Aviso: layout_order não encontrado em sectionData', sectionData.value)
-    return accommodationsItems.value
-  }
-
-  return [...accommodationsItems.value].sort((a, b) => {
-    // stem costuma ser o nome limpo do arquivo (ex: "acomodacoes/vedic-dham")
-    // Vamos pegar apenas a parte final dele
-    const slugA = a.stem ? a.stem.split('/').pop() : a.path.split('/').pop()
-    const slugB = b.stem ? b.stem.split('/').pop() : b.path.split('/').pop()
-
-    // Debug opcional: remova o comentário abaixo para ver os nomes no console
-    // console.log(`Comparando: ${slugA} vs ${slugB} usando a ordem:`, order)
-
-    const indexA = order.indexOf(slugA)
-    const indexB = order.indexOf(slugB)
-
-    const posA = indexA === -1 ? 999 : indexA
-    const posB = indexB === -1 ? 999 : indexB
-
-    return posA - posB
-  })
-})
+// Executa as buscas
+const { data: sectionData } = await getSectionData()
+const { data: accommodationsItems } = await getContentList()
+// Cria a lista ordenada
+const sortedAccommodations = getSortedList(accommodationsItems, sectionData)
 
 
 const openDetails = (item) => {
   selectedItem.value = item;
   displayModal.value = true;
 };
+
+console.log('accommodationsItems:', accommodationsItems.value);
+console.log('sectionData:', sectionData.value);
 </script>
 
 <template>
@@ -92,22 +62,31 @@ const openDetails = (item) => {
         </div>
       </div>
 
-      <Dialog v-model:visible="displayModal" :header="selectedItem?.title" modal dismissableMask :style="{ width: '90vw', maxWidth: '1000px' }">
-        <div class="flex flex-col md:flex-row h-full max-h-[80vh] overflow-y-auto">
-          <div class="w-full md:w-1/2 h-64 md:h-auto">
-            <img v-if="selectedItem" :src="`/images/${selectedItem.meta.image}`" class="w-full h-full object-cover" />
-          </div>
-          <div class="w-full md:w-1/2 p-8 bg-[#fdfcf0] flex flex-col justify-center">
-            <h3 class="text-3xl font-serif mb-6 text-[#4a3728] border-b border-[#d1b253]/30 pb-4">{{ selectedItem?.title }}</h3>
-            <div class="text-lg leading-relaxed text-gray-800 font-serif italic opacity-90 markdown-content">
-              <ContentRenderer v-if="selectedItem" :value="selectedItem" />
-            </div>
-            <div class="mt-8">
-              <button @click="displayModal = false" class="bg-[#d1b253] text-white px-8 py-3 rounded-full font-serif uppercase tracking-widest hover:bg-[#b09440] transition-colors">Fechar</button>
-            </div>
-          </div>
-        </div>
-      </Dialog>
+     <Dialog v-model:visible="displayModal" :header="selectedItem?.title" modal dismissableMask :style="{ width: '90vw', maxWidth: '1000px' }">
+  <div class="flex flex-col md:flex-row h-full max-h-[80vh] overflow-y-auto">
+    <div class="w-full md:w-1/2 h-64 md:h-auto">
+      <img v-if="selectedItem" :src="`/images/${selectedItem.meta?.image || selectedItem.image}`" class="w-full h-full object-cover" />
+    </div>
+
+    <div class="w-full md:w-1/2 p-8 bg-[#fdfcf0] flex flex-col justify-center">
+      <h3 class="text-3xl font-serif mb-6 text-[#4a3728] border-b border-[#d1b253]/30 pb-4">
+        {{ selectedItem?.title }}
+      </h3>
+      
+      <div class="text-lg leading-relaxed text-gray-800 font-serif italic opacity-90 markdown-content">
+        <ContentRenderer v-if="selectedItem && selectedItem.body && typeof selectedItem.body === 'object'" :value="selectedItem" />
+        
+        <MDC v-else-if="selectedItem && selectedItem.body" :value="selectedItem.body" />
+        
+        <p v-else class="whitespace-pre-line">{{ selectedItem?.description }}</p>
+      </div>
+
+      <div class="mt-8">
+        <button @click="displayModal = false" class="bg-[#d1b253] text-white px-8 py-3 rounded-full font-serif uppercase tracking-widest hover:bg-[#b09440] transition-colors">Fechar</button>
+      </div>
+    </div>
+  </div>
+</Dialog>
 
     </div>
   </section>

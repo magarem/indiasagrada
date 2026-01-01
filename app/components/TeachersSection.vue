@@ -1,16 +1,17 @@
 <template>
-  <section v-if="content" class="py-16 sm:py-24" style="background-color: #fae2c8; color: #010000;">
+  <section v-if="sectionData" class="py-16 sm:py-24" style="background-color: #fae2c8; color: #010000;">
     <div class="container mx-auto px-4 max-w-5xl">
       
       <div class="text-center mb-16">
         <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 uppercase tracking-tight">
-          {{ content.title }}
+          {{ sectionData.title }}
         </h2>
         <div class="h-1 w-24 bg-black mx-auto"></div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-12">
-        <div v-for="(teacher, index) in content.teachers" :key="index" 
+        <div v-for="(teacher, index) in sortedItems" :key="index" 
+        
              class="flex flex-col items-center text-center group">
           
           <div class="relative mb-8">
@@ -28,7 +29,15 @@
             {{ teacher.role }}
           </p>
           <p class="text-base leading-relaxed opacity-90 text-justify md:text-center italic">
-            "{{ teacher.bio }}"
+            <ContentRenderer 
+                v-if="teacher.body && typeof teacher.body === 'object'" 
+                :value="teacher" 
+              />
+              
+              <MDC 
+                v-else-if="teacher.body" 
+                :value="teacher.body" 
+              />
           </p>
         </div>
       </div>
@@ -42,7 +51,24 @@ const props = defineProps({
 })
 
 // Puxamos os dados do arquivo facilitadores.md
-const { content } = await useContentSource('facilitadores', props.isPreview)
+// const { content } = await useContentSource('facilitadores', props.isPreview)
+
+
+
+
+// 1. Dados da Seção
+// Adicionamos props.isPreview na chave para evitar cache entre modos
+const { getSectionData, getContentList, getSortedList } = useContentManager('facilitadores', props.isPreview)
+
+// Executa as buscas
+const { data: sectionData } = await getSectionData()
+const { data: sectionItems } = await getContentList()
+// Cria a lista ordenada
+const sortedItems = getSortedList(sectionItems, sectionData)
+
+console.log('TeachersSection - sectionData:', sectionData.value)
+console.log('TeachersSection - sortedItems:', sortedItems.value)  
+
 </script>
 
 <style scoped>
